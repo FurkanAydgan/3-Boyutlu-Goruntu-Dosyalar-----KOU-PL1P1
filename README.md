@@ -1,4 +1,4 @@
-# KOU-PL1P1Nesneye Yönelik Tic Tac Toe
+# KOU-PL1P1 3 boyutlu görüntü dosyaları projesi
 Bu readme.txt dosyası, 3 boyutlu görüntü dosyaları projesi  koduna aittir.
 Bu paket, kod ile aynı dizin içerisinde bulunacaktır.
 
