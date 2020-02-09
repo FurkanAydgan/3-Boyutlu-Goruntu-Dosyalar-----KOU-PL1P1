@@ -33,7 +33,7 @@ uygun çalıştı.
 -------------------
 
 
-4-KODU DERLEMEK:
+4-KODU DERLEME:
 ------------------
 Bilgisayarımızda kurulu olan C derleyici ile kodu kolayca derleyebiliriz.
 
@@ -41,10 +41,12 @@ Derleme bittikten sonra kolayca programı çalıştırabilirsiniz.
 ------------------
 
 
+
 5- PARAMETRELER
 ---------------------------
 Kodun çalışması için başlangıçta herhangi bir parametre gerekmiyor.
 ------------------
+
 
 
 
