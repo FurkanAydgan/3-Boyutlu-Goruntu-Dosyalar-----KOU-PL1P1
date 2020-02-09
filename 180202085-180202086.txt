@@ -1,0 +1,1311 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <dirent.h>
+#include <math.h>
+FILE *m;
+FILE *g;
+char satir[2000];
+struct a
+{
+      float x;
+      float y;
+      float z;
+      int r;
+      int g;
+      int b;
+};
+struct c
+{
+      float x;
+      float y;
+      float z;
+};
+ /*
+ * Ad: 3 Boyutlu Görüntü Dosyalarý
+ * Aciklama: Verilen 3 boyutlu dosyalarý okumaya yarar
+ * Tarih: 25.10.2019
+ * Yapimci: Furkan Aydoðan & Sefa Berke Kara
+ * Numaralar: 180202085 & 180202086
+ */
+//84k veriye sahip dosyada uzun sürmektedir
+
+void satir_oku(int sn,char s[][100],int o)
+{
+      int i=0;
+      m=fopen(s[o],"r");
+      for(i=0; i<=sn; i++)
+      {
+            fgets(satir,sizeof(satir),m);
+      }
+      fclose(m);
+}
+void str_uz(int *sb,char s[][100],int o,int *a)
+{
+
+      char ch;
+      int uz=0;
+      m=fopen(s[o],"r");
+      while(!feof(m))
+      {
+            ch=fgetc(m);
+            if(ch=='\n')
+                  uz++;
+      }
+      *sb=uz;
+      *a=uz-4;
+      fclose(m);
+}
+int main()
+{
+      DIR *d;
+      struct dirent *dir;
+      char c[100][1000];
+      d = opendir(".");
+      int i=0;
+      if (d)
+      {
+            while ((dir = readdir(d)) != NULL)
+            {
+                  strcpy(c[i],dir->d_name);
+                  i++;
+            }
+            closedir(d);
+      }
+      char p[100][100],tmp2[100][100];
+      int j,l=0;
+      for(j=1; j<100; j++)
+      {
+            for(int k=1; k<100; k++)
+            {
+                  if(c[j][k]=='.' && c[j][k+1]=='n' && c[j][k+2]=='k')
+                  {
+                        strcpy(p[l],c[j]);
+                        l++;
+                  }
+            }
+      }
+      struct a *k;
+      struct c *rgbsiz;
+      FILE *m,*g;
+      int o=0,al=0,art=0,cont2=0,cont3=0,uz,sl2=0,uz1,sl=0,cont=0,cont1=0,ascii=0,binar=0,secim,y=0,tip[l+1],tip1[l+1],t=0,tip2[l+1],tip3[l+1],len1[l+1];
+      for(int h=0; h<l; h++)
+      {
+            tip[h]=0,tip1[h]=0,tip2[h]=0,tip3[h]=0;
+      }
+      m = fopen(p[o],"r");
+      char ch,dizi[1000],kelime1[10],kelime2[10],dizi1[1000],degis[50],degis1[50],degis2[50],dizi2[1000][1000];
+      printf("dosyalari kontrol etmek icin 1 tusuna programdan cikmak icin 6 tusuna basiniz...\n");
+      while(1)
+      {
+            if(tip2[0]!=0 || tip3[0]!=0)
+            {
+                  printf("\nen yakin ve uzak nokta bilgiler icin 2'ye basiniz\n");
+                  printf("kupun kenar nokta bilgileri icin 3'e basiniz\n");
+                  printf("kurenin icinde kalan noktalarin bilgileri icin 4'e basiniz\n");
+                  printf("noktalarin birbirine olan uzakliklarinin ortalamasi icin 5'e basiniz\n");
+            }
+            printf("Lutfen secim  yapiniz : ");
+            scanf("%d",&secim);
+            printf("\n");
+            switch(secim)
+            {
+            case 1:
+            {
+                  for(int h=0; h<l; h++)
+                  {
+                        printf("\n%s okunuyor...\n",p[o]);
+                        satir_oku(4,&p,o);
+                        sscanf(satir,"%s %s",&kelime1,&kelime2);
+                        if(strcmp(kelime2,"ascii")==0 || strcmp(kelime2,"ASCII")==0)
+                        {
+                              str_uz(&uz,&p,o,&uz1);
+                              k=(struct a*)malloc((uz+1)*sizeof(struct a));
+                              ascii=1;
+                        }
+                        if(strcmp(kelime2,"binary")==0 || strcmp(kelime2,"BINARY")==0 )
+                        {
+                              fclose(m);
+                              m=fopen(p[o],"rb");
+                              rgbsiz=(struct c*)malloc((100000)*sizeof(struct c));
+                              binar=1;
+                        }
+                        if(ascii!=0)
+                        {
+                              int sl=0,sl1=0,sl2=0,point,sl3=0,cont=0,cont2=0,cont3=0,cont1=0;
+                              char name[10];
+                              satir_oku(3,&p,o);
+                              sscanf (satir,"%s %d",name,&point);
+                              satir_oku(2,&p,o);
+                              char word[10],a[3]="aaa",q[3]="qqq",c[3]="sss",v[3]="vvv",e[3]="eee",f[3]="fff";
+                              sscanf(satir,"%s %s %s %s %s %s %s\n",&word,&a,&q,&c,&v,&e,&f);
+                              if(a[0]!='x' || q[0]!='y' || c[0]!='z')
+                              {
+                                    sl2=1,sl3=1;
+                                    strcpy(dizi,"hatali_output_");
+                                    strcat(dizi,p[o]);
+                                    g=fopen(dizi,"a+");
+                                    fprintf(g,"Alanlar kismi hatali verilmistir");
+                                    fclose(g);
+                              }
+
+                              if(a[0]=='x' && q[0]=='y' && c[0]=='z' && v[0]!='r' && e[0]!='g' && f[0]!='b')
+                              {
+                                    for(int i=5; i<uz; i++)
+                                    {
+                                          k[i].r=-1;
+                                          satir_oku(i,&p,o);
+                                          sscanf(satir,"%f %f %f %d %d %d",&k[i].x,&k[i].y,&k[i].z,&k[i].r,&k[i].g,&k[i].b);
+                                          if(k[i].r!=-1)
+                                          {
+                                                strcpy(dizi,"hatali_output_");
+                                                strcat(dizi,p[o]);
+                                                g=fopen(dizi,"a+");
+                                                fprintf(g,"alanlar kismi ile noktalar kismindaki veriler uyusmamaktadir\n");
+                                                fclose(g);
+                                                sl2=1,cont1=0,sl1=1,sl3=1;
+                                                break;
+                                          }
+                                          else
+                                          {
+                                                cont++,cont2=1,sl1=1,sl3=1;
+                                          }
+                                    }
+                              }
+                              if(a[0]=='x' && q[0]=='y' && c[0]=='z' && v[0]=='r' && e[0]=='g' && f[0]=='b')
+                              {
+                                    cont1++;
+                                    sl3=1;
+                              }
+                              if(sl3==0)
+                              {
+                                    if(a[0]=='x' && q[0]=='y' && c[0]=='z' || v[0]!='r' || e[0]!='g' || f[0]!='b')
+                                    {
+
+                                          strcpy(dizi,"hatali_output_");
+                                          strcat(dizi,p[o]);
+                                          g=fopen(dizi,"a+");
+                                          printf("alanlar kisminda hatali yazilmistir\n");
+                                          fprintf(g,"alanlar kisminda hatali yazilmistir \n");
+                                          sl1=1;
+                                          sl2=1;
+                                          cont=0;
+
+                                          fclose(g);
+                                    }
+                              }
+                              if(cont1!=0)
+                              {
+                                    for(int i=5; i<uz; i++)
+                                    {
+                                          k[i].r=-1,k[i].g=-1,k[i].b=-1,k[i].x=-1,k[i].y=-1,k[i].z=-1;
+                                          satir_oku(i,&p,o);
+                                          sscanf(satir,"%f %f %f %d %d %d",&k[i].x,&k[i].y,&k[i].z,&k[i].r,&k[i].g,&k[i].b);
+                                          if(point!=uz1)
+                                          {
+                                                strcpy(dizi,"hatali_output_");
+                                                strcat(dizi,p[o]);
+                                                g=fopen(dizi,"a+");//  printf("Nokta sayilari uyusmamaktadir\n\n");
+                                                fprintf(g,"\nnokta sayisi uyusmamaktadir\n");
+                                                fclose(g);
+                                                sl2++;
+                                                sl1=1;
+                                                cont=0;
+                                                break;
+                                          }
+                                          if(k[i].x==-1 && k[i].y==-1 && k[i].z==-1)
+                                          {
+                                                strcpy(dizi,"hatali_output_");
+                                                strcat(dizi,p[o]);
+                                                g=fopen(dizi,"a+");
+                                                printf("%d. satirda bos nokta var",i-4);
+                                                fprintf(g,"%d. satirda bos nokta var",i-4);
+                                                fclose(g);
+                                                sl2++;
+
+                                          }
+                                          else if(k[i].r==-1 || k[i].g==-1 || k[i].b==-1)
+                                          {
+                                                strcpy(dizi,"hatali_output_");
+                                                strcat(dizi,p[o]);
+                                                g=fopen(dizi,"a+");
+                                                printf("\n%d. r g b nokta verisi bulunamadi\n",i-4);
+                                                fprintf(g,"\n%d. r g b nokta verisi bulunamadi\n",i-4);
+                                                fclose(g);
+                                                sl1=1;
+                                                sl2++;
+
+                                          }
+                                    }
+                              }
+                              if(sl1!=1)
+                              {
+                                    for(int i=5; i<uz1+1; i++)
+                                    {
+                                          if(k[i].r!=-1 && k[i].g!=-1 && k[i].b!=-1)
+                                          {
+                                                if(point==uz1)
+                                                {
+                                                      sl=1;
+                                                      cont3=1;
+                                                      break;
+                                                }
+                                                else
+                                                {
+                                                      strcpy(dizi,"hatali_output_");
+                                                      strcat(dizi,p[o]);
+                                                      g=fopen(dizi,"a+");
+                                                      fprintf(g,"\nnokta sayisi uyusmamaktadir\n");
+                                                      fclose(g);
+                                                      sl2++;
+                                                      break;
+                                                }
+
+                                          }
+                                    }
+                              }
+                              if(cont!=0)
+                              {
+                                    if(point==uz1)
+                                          sl=1;
+                                    else
+                                    {
+                                          strcpy(dizi,"hatali_output_");
+                                          strcat(dizi,p[o]);
+                                          g=fopen(dizi,"a+");
+                                          fprintf(g,"nokta sayisi uyusmamaktadir");
+                                          fclose(g);
+                                          sl2++;
+                                    }
+
+                              }
+                              if(sl==1)
+                              {
+                                    len1[t]=uz;
+                                    strcpy(dizi1,"output_");
+                                    strcat(dizi1,p[o]);
+                                    g=fopen(dizi1,"w");
+                                    fputs("SECIM 1\n",g);
+                                    printf("tum dosyalar uyumludur\n");
+                                    fprintf(g,"tum dosyalar uyumludur\n");
+                                    fclose(g);
+                                    strcpy(dizi2[y],"output_");
+                                    strcat(dizi2[y],p[o]);
+                                    strcpy(tmp2[y],p[o]);
+                                    o++;
+                                    tip[t]=cont2;
+                                    tip1[t]=cont3;
+                                    tip3[t]=ascii;
+                                    cont2=0,cont3=0,sl=0,sl1=0,sl2=0,binar=0,ascii=0;
+                                    t++;
+                                    y++;
+                              }
+                              if(sl2!=0)
+                              {
+                                    printf("dosya olusturamadi\n");
+                                    fprintf(g,"dosya olusturamadi");
+                                    o++;
+
+                                    cont2=0,cont3=0,cont1=0,sl=0,sl1=0,sl2=0,binar=0,ascii=0;
+                              }
+                              free(k),fclose(m);
+                        }
+                        if(binar!=0)
+                        {
+                              sl2=0,cont=0,cont1=0;
+                              int sl=0,sl1=0,point,sl3=0;
+                              char name[20];
+                              satir_oku(3,&p,o);
+                              sscanf (satir,"%s %d",name,&point);
+                              satir_oku(2,&p,o);
+                              char word[10],a[3]="aaa",q[3]="qqq",c[3]="ccc",v[3]="vvv",e[3]="eee",f[3]="fff";
+                              sscanf(satir,"%s %s %s %s %s %s %s",&word,&a,&q,&c,&v,&e,&f);
+                              if(a[0]!='x' || q[0]!='y' || c[0]!='z')
+                              {
+                                    sl2++;
+                                    sl1=1,sl3,cont1;
+                                    strcpy(dizi,"hatali_output_");
+                                    strcat(dizi,p[o]);
+                                    g=fopen(dizi,"a+");
+                                    fprintf(g,"Alanlar kismi hatali verilmistir\n");
+                                    fclose(g);
+                              }
+                              if(a[0]=='x' && q[0]=='y' && c[0]=='z' && v[0]!='r' && e[0]!='g' && f[0]!='b')
+                              {
+                                    sl3=1,cont2=1,sl1=1;
+                                    cont++;
+                                    int sayac=0;
+                                    while(!feof(m))
+                                    {
+                                          ch=fgetc(m);
+                                          if(ch=='\n')
+                                                sayac++;
+                                          if(sayac==5)
+                                                break;
+                                    }
+                                    int sayac7=1;
+                                    int ck=0;
+                                    while(1)
+                                    {
+                                          ck=fread(&rgbsiz[sayac7], sizeof(struct c), 1, m);
+                                          sayac7++;
+                                          if(ck!=1)
+                                          {
+                                                break;
+                                          }
+                                    }
+                                    uz=sayac7-2;
+                                    rgbsiz=(struct c*)realloc(rgbsiz,(uz+1)*sizeof(struct c));
+                              }
+                              if(a[0]=='x' && q[0]=='y' && c[0]=='z' && v[0]=='r' && e[0]=='g' && f[0]=='b')
+                              {
+                                    k=(struct a*)malloc((100000)*sizeof(struct a));
+                                    sl3=1,cont1=1;
+                                    int sayac=0;
+                                    fseek(m,0,SEEK_SET);
+                                    while(!feof(m))
+                                    {
+                                          ch=fgetc(m);
+                                          if(ch=='\n')
+                                                sayac++;
+                                          if(sayac==5)
+                                                break;
+                                    }
+                                    int sayac7=1;
+                                    int ck=0;
+                                    while(1)
+                                    {
+                                          ck=fread(&k[sayac7], sizeof(struct a), 1, m);
+                                          sayac7++;
+                                          if(ck!=1)
+                                          {
+                                                break;
+                                          }
+                                    }
+                                    uz=sayac7-2;
+                                    k=(struct a*)realloc(k,(uz+1)*sizeof(struct a));
+                              }
+                              if(sl3==0)
+                              {
+                                    if(a[0]=='x' && q[0]=='y' && c[0]=='z' || v[0]!='r' || e[0]!='g' || f[0]!='b')
+                                    {
+                                          strcpy(dizi,"hatali_output_");
+                                          strcat(dizi,p[o]);
+                                          g=fopen(dizi,"a+");
+                                          fprintf(g,"Alanlar kismi hatali verilmistir\n");
+                                          fclose(g);
+                                          sl2=1,sl1=1,cont=1,cont1=0;
+                                    }
+                              }
+                              if(cont1!=0)
+                              {
+                                    int sayac=0;
+                                    fseek(m,0,SEEK_SET);
+                                    while(!feof(m))
+                                    {
+                                          ch=fgetc(m);
+                                          if(ch=='\n')
+                                                sayac++;
+                                          if(sayac==5)
+                                                break;
+                                    }
+                                    for(int i=1; i<=uz; i++)
+                                    {
+                                          k[i].r=-1;
+                                          k[i].g=-1;
+                                          k[i].b=-1;
+                                          fread(&k[i], sizeof(struct a), 1, m);
+                                          if(k[i].r==-1 || k[i].g==-1 || k[i].b==-1)
+                                          {
+                                                strcpy(dizi,"hatali_output_");
+                                                strcat(dizi,p[o]);
+                                                g=fopen(dizi,"w");
+                                                printf("\n%d. r g b nokta verisi bulunamadi\n",i);
+                                                fprintf(g,"%d. r g b nokta verisi bulunamadi\n",i);
+                                                sl1=1,cont2=0,cont3=0;
+                                                sl2++;
+                                          }
+                                          else
+                                                cont++;
+                                    }
+                              }
+                              if(sl1!=1)
+                              {
+                                    for(int i=5; i<=uz; i++)
+                                    {
+                                          if(k[i].r!=-1 && k[i].g!=-1 && k[i].b!=-1)
+                                          {
+                                                fseek(m,0,SEEK_SET);
+                                                satir_oku(3,&p,o);
+                                                char name[20];
+                                                sscanf (satir,"%s %d",name,&point);
+                                                if(point==uz)
+                                                {
+                                                      if(a[0]=='x' && q[0]=='y' && c[0]=='z')
+                                                      {
+                                                            sl=1,cont3=1;
+                                                            break;
+                                                      }
+                                                }
+                                                else
+                                                {
+                                                      strcpy(dizi,"hatali_output_");
+                                                      strcat(dizi,p[o]);
+                                                      g=fopen(dizi,"a+");
+                                                      fprintf(g,"nokta sayilari uyumsuzdur");
+                                                      sl2++;
+                                                      cont2=0,cont3=0;
+                                                }
+                                          }
+                                    }
+                              }
+                              if(cont!=0)
+                              {
+                                    if(point==uz)
+                                          sl=1;
+                                    else
+                                    {
+                                          sl2++;
+                                          strcpy(dizi,"hatali_output_");
+                                          strcat(dizi,p[o]);
+                                          g=fopen(dizi,"a+");
+                                          fprintf(g,"Nokta sayisi uyumamaktadir");
+                                          fclose(g);
+
+                                    }
+
+
+                              }
+                              if(sl==1)
+                              {
+                                    len1[t]=uz;
+                                    strcpy(dizi1,"output_");
+                                    strcat(dizi1,p[o]);
+                                    g=fopen(dizi1,"w");
+                                    strcpy(dizi2[y],"output_");
+                                    strcat(dizi2[y],p[o]);
+                                    fputs("SECIM 1\n",g);
+                                    printf("dosyalar uyumlu\n");
+                                    fputs("tum dosyalar uyumludur\n",g);
+                                    fclose(g);
+                                    strcpy(tmp2[y],p[o]);
+                                    tip[t]=cont2;
+                                    tip1[t]=cont3;
+                                    tip2[t]=binar;
+                                    o++;
+                                    cont2=0,cont3=0,sl=0,sl1=0,sl2=0,binar=0,ascii=0;
+                                    t++;
+                                    y++;
+                              }
+                              if(sl2!=0)
+                              {
+                                    printf("dosya olusturamadi\n");
+                                    o++;
+
+                                    cont2=0,cont3=0,sl=0,sl1=0,sl2=0,binar,ascii;
+                              }
+                              free(k),fclose(m);
+                        }
+                  }
+                  break;
+            }
+            case 2:
+            {
+                  if(tip2[0]==0 && tip3[0]==0)
+                        printf("lutfen ilk once 1 tusuna basarak dosyalari kontrol ediniz\n");
+                  for(int h=0; h<y; h++)
+                  {
+                        printf("\n%s hesaplaniyor...\n",tmp2[h]);
+                        cont2=tip[h];
+                        cont3=tip1[h];
+                        binar=tip2[h];
+                        ascii=tip3[h];
+                        if(cont3!=0)
+                        {
+                              int i=0,c,n,lk,tmp,tmp1,cc=0;
+                              char ch;
+                              m=fopen(tmp2[h],"r");
+                              k=(struct a*)malloc((len1[h]+2)*sizeof(struct a));
+                              while(!feof(m))
+                              {
+                                    ch=fgetc(m);
+                                    if(ch=='\n')
+                                          cc++;
+                                    if(cc==5)
+                                          break;
+                              }
+                              if(binar==1)
+                              {
+                                    int ck=0;
+                                    while(1)
+                                    {
+                                          ck=fread(&k[i], sizeof(struct a), 1, m);
+                                          i++;
+                                          if(ck==0)
+                                                break;
+                                    }
+                              }
+                              if(ascii==1)
+                              {
+                                    do
+                                    {
+                                          c = fscanf(m,"%f %f %f %d %d %d",&k[i].x,&k[i].y,&k[i].z,&k[i].r,&k[i].g,&k[i].b);
+                                          i++;
+                                    }
+                                    while (c !=EOF);
+                              }
+                              float enkucuk=sqrt(pow(k[0].x-k[1].x,2)+pow(k[0].y-k[1].y,2)+pow(k[0].z-k[1].z,2));
+                              float enbuyuk=sqrt(pow(k[0].x-k[1].x,2)+pow(k[0].y-k[1].y,2)+pow(k[0].z-k[1].z,2));
+                              for(int enkc=0; enkc<i-2; enkc++)
+                              {
+                                    for(int enkc1=enkc+1; enkc1<i-1; enkc1++)
+                                    {
+                                          if(enkucuk>sqrt(pow(k[enkc].x-k[enkc1].x,2)+pow(k[enkc].y-k[enkc1].y,2)+pow(k[enkc].z-k[enkc1].z,2)))
+                                          {
+                                                enkucuk=sqrt(pow(k[enkc].x-k[enkc1].x,2)+pow(k[enkc].y-k[enkc1].y,2)+pow(k[enkc].z-k[enkc1].z,2));
+                                                n=enkc1;
+                                                lk=enkc;
+                                          }
+                                          if(enbuyuk<sqrt(pow(k[enkc].x-k[enkc1].x,2)+pow(k[enkc].y-k[enkc1].y,2)+pow(k[enkc].z-k[enkc1].z,2)))
+                                          {
+                                                enbuyuk=sqrt(pow(k[enkc].x-k[enkc1].x,2)+pow(k[enkc].y-k[enkc1].y,2)+pow(k[enkc].z-k[enkc1].z,2));
+                                                tmp1=enkc1;
+                                                tmp=enkc;
+                                          }
+                                    }
+                              }
+                              g=fopen(dizi2[h],"a");
+                              fputs("SECIM 2\n",g);
+                              fprintf(g,"en yakin iki nokta\n");
+                              printf("en yakin iki nokta\n");
+                              printf("%d--- %f %f %f %d %d %d\n",n+1,k[n].x,k[n].y,k[n].z,k[n].r,k[n].g,k[n].b);
+                              printf("%d--- %f %f %f %d %d %d\n",lk+1,k[lk].x,k[lk].y,k[lk].z,k[lk].r,k[lk].g,k[lk].b);
+                              fprintf(g,"%d.nokta   %f %f %f %d %d %d\n",n+1,k[n].x,k[n].y,k[n].z,k[n].r,k[n].g,k[n].b);
+                              fprintf(g,"%d.nokta   %f %f %f %d %d %d\n",lk+1,k[lk].x,k[lk].y,k[lk].z,k[lk].r,k[lk].g,k[lk].b);
+                              fprintf(g,"en uzak iki nokta\n");
+                              printf("en uzak iki nokta\n");
+                              printf("%d--- %f %f %f %d %d %d\n",tmp+1,k[tmp].x,k[tmp].y,k[tmp].z,k[tmp].r,k[tmp].g,k[tmp].b);
+                              printf("%d--- %f %f %f %d %d %d\n",tmp1+1,k[tmp1].x,k[tmp1].y,k[tmp1].z,k[tmp1].r,k[tmp1].g,k[tmp1].b);
+                              fprintf(g,"%d.nokta   %f %f %f %d %d %d\n",tmp+1,k[tmp].x,k[tmp].y,k[tmp].z,k[tmp].r,k[tmp].g,k[tmp].b);
+                              fprintf(g,"%d.nokta   %f %f %f %d %d %d\n",tmp1+1,k[tmp1].x,k[tmp1].y,k[tmp1].z,k[tmp1].r,k[tmp1].g,k[tmp1].b);
+                              fclose(g),free(k),fclose(m);
+                        }
+                        if(cont2!=0)
+                        {
+                              k=(struct a*)malloc((len1[h]+1)*sizeof(struct a));
+                              int i=0,c,n,lk,tmp,tmp1,cc=0;
+                              char ch;
+                              if(binar==1)
+                              {
+                                    m=fopen(tmp2[h],"r");
+                                    fseek(m,0,SEEK_SET);
+                                    while(!feof(m))
+                                    {
+                                          ch=fgetc(m);
+                                          if(ch=='\n')
+                                                cc++;
+                                          if(cc==5)
+                                                break;
+                                    }
+                                    int ck=0;
+                                    while(1)
+                                    {
+                                          ck=fread(&rgbsiz[i],sizeof(struct c),1,m);
+                                          i++;
+                                          if(ck!=1)
+                                                break;
+                                    }
+                                    float enkucuk=sqrt(pow(rgbsiz[0].x-rgbsiz[1].x,2)+pow(rgbsiz[0].y-rgbsiz[1].y,2)+pow(rgbsiz[0].z-rgbsiz[1].z,2));
+                                    float enbuyuk=sqrt(pow(rgbsiz[0].x-rgbsiz[1].x,2)+pow(rgbsiz[0].y-rgbsiz[1].y,2)+pow(rgbsiz[0].z-rgbsiz[1].z,2));
+                                    for(int enkc=0; enkc<i-2; enkc++)
+                                    {
+                                          for(int enkc1=enkc+1; enkc1<i-1; enkc1++)
+                                          {
+                                                if(enkucuk>sqrt(pow(rgbsiz[enkc].x-rgbsiz[enkc1].x,2)+pow(rgbsiz[enkc].y-rgbsiz[enkc1].y,2)+pow(rgbsiz[enkc].z-rgbsiz[enkc1].z,2)))
+                                                {
+                                                      enkucuk=sqrt(pow(rgbsiz[enkc].x-rgbsiz[enkc1].x,2)+pow(rgbsiz[enkc].y-rgbsiz[enkc1].y,2)+pow(rgbsiz[enkc].z-rgbsiz[enkc1].z,2));
+                                                      n=enkc1;
+                                                      lk=enkc;
+                                                }
+                                                if(enbuyuk<sqrt(pow(rgbsiz[enkc].x-rgbsiz[enkc1].x,2)+pow(rgbsiz[enkc].y-rgbsiz[enkc1].y,2)+pow(rgbsiz[enkc].z-rgbsiz[enkc1].z,2)))
+                                                {
+                                                      enbuyuk=sqrt(pow(rgbsiz[enkc].x-rgbsiz[enkc1].x,2)+pow(rgbsiz[enkc].y-rgbsiz[enkc1].y,2)+pow(rgbsiz[enkc].z-rgbsiz[enkc1].z,2));
+                                                      tmp1=enkc1;
+                                                      tmp=enkc;
+                                                }
+                                          }
+                                    }
+                                    g=fopen(dizi2[h],"a");
+                                    printf("en yakin iki nokta\n");
+                                    fputs("SECIM 2\n",g);
+                                    fprintf(g,"en yakin iki nokta\n");
+
+                                    printf("%d--- %f %f %f\n",n+1,rgbsiz[n].x,rgbsiz[n].y,rgbsiz[n].z);
+                                    printf("%d--- %f %f %f\n",lk+1,rgbsiz[lk].x,rgbsiz[lk].y,rgbsiz[lk].z);
+                                    fprintf(g,"%d.nokta  %f %f %f\n",n+1,rgbsiz[n].x,rgbsiz[n].y,rgbsiz[n].z);
+                                    fprintf(g,"%d.nokta  %f %f %f\n",lk+1,rgbsiz[lk].x,rgbsiz[lk].y,rgbsiz[lk].z);
+                                    fprintf(g,"en uzak iki nokta\n");
+                                    printf("en uzak iki nokta\n");
+                                    printf("%d--- %f %f %f\n",tmp+1,rgbsiz[tmp].x,rgbsiz[tmp].y,rgbsiz[tmp].z);
+                                    printf("%d--- %f %f %f\n",tmp1+1,rgbsiz[tmp1].x,rgbsiz[tmp1].y,rgbsiz[tmp1].z);
+                                    fprintf(g,"%d.nokta  %f %f %f\n",tmp+1,rgbsiz[tmp].x,rgbsiz[tmp].y,rgbsiz[tmp].z);
+                                    fprintf(g,"%d.nokta  %f %f %f\n",tmp1+1,rgbsiz[tmp1].x,rgbsiz[tmp1].y,rgbsiz[tmp1].z);
+                                    fclose(g);
+                              }
+                              if(ascii==1)
+                              {
+                                    m=fopen(tmp2[h],"r");
+                                    fseek(m,0,SEEK_SET);
+                                    while(!feof(m))
+                                    {
+                                          ch=fgetc(m);
+                                          if(ch=='\n')
+                                                cc++;
+                                          if(cc==5)
+                                                break;
+                                    }
+                                    do
+                                    {
+                                          c = fscanf(m,"%f %f %f",&k[i].x,&k[i].y,&k[i].z);
+                                          i++;
+                                    }
+                                    while (c !=EOF);
+                                    float enkucuk=sqrt(pow(k[0].x-k[1].x,2)+pow(k[0].y-k[1].y,2)+pow(k[0].z-k[1].z,2));
+                                    float enbuyuk=sqrt(pow(k[0].x-k[1].x,2)+pow(k[0].y-k[1].y,2)+pow(k[0].z-k[1].z,2));
+                                    for(int enkc=0; enkc<i-2; enkc++)
+                                    {
+                                          for(int enkc1=enkc+1; enkc1<i-1; enkc1++)
+                                          {
+                                                if(enkucuk>sqrt(pow(k[enkc].x-k[enkc1].x,2)+pow(k[enkc].y-k[enkc1].y,2)+pow(k[enkc].z-k[enkc1].z,2)))
+                                                {
+                                                      enkucuk=sqrt(pow(k[enkc].x-k[enkc1].x,2)+pow(k[enkc].y-k[enkc1].y,2)+pow(k[enkc].z-k[enkc1].z,2));
+                                                      n=enkc1;
+                                                      lk=enkc;
+                                                }
+                                                if(enbuyuk<sqrt(pow(k[enkc].x-k[enkc1].x,2)+pow(k[enkc].y-k[enkc1].y,2)+pow(k[enkc].z-k[enkc1].z,2)))
+                                                {
+                                                      enbuyuk=sqrt(pow(k[enkc].x-k[enkc1].x,2)+pow(k[enkc].y-k[enkc1].y,2)+pow(k[enkc].z-k[enkc1].z,2));
+                                                      tmp1=enkc1;
+                                                      tmp=enkc;
+                                                }
+                                          }
+                                    }
+                                    g=fopen(dizi2[h],"a");
+                                    fputs("SECIM 2\n",g);
+                                    fprintf(m,"en yakin iki nokta\n\n");
+                                    printf("en yakin iki nokta\n\n");
+                                    printf("%d.  %f %f %f\n\n",n+1,k[n].x,k[n].y,k[n].z);
+                                    printf("%d.  %f %f %f\n\n",lk+1,k[lk].x,k[lk].y,k[lk].z);
+                                    fprintf(g,"%d.nokta %f %f %f\n",n+1,k[n].x,k[n].y,k[n].z);
+                                    fprintf(g,"%d.nokta %f %f %f\n",lk+1,k[lk].x,k[lk].y,k[lk].z);
+                                    fprintf(g,"en uzak iki nokta\n\n");
+                                    printf("en uzak iki nokta\n\n");
+                                    printf("%d.   %f %f %f\n\n",tmp+1,k[tmp].x,k[tmp].y,k[tmp].z);
+                                    printf("%d.   %f %f %f\n",tmp1+1,k[tmp1].x,k[tmp1].y,k[tmp1].z);
+                                    fprintf(g,"%d.nokta %f %f %f\n",tmp+1,k[tmp].x,k[tmp].y,k[tmp].z);
+                                    fprintf(g,"%d.nokta %f %f %f\n",tmp1+1,k[tmp1].x,k[tmp1].y,k[tmp1].z);
+                                    fclose(g);
+                              }
+                              free(k),fclose(m);
+                        }
+                  }
+                  break;
+            }
+            case 3:
+            {
+                  if(tip2[0]==0 && tip3[0]==0)
+                        printf("lutfen ilk once 1 tusuna basarak dosyalari kontrol ediniz\n");
+                  for(int h=0; h<y; h++)
+                  {
+                        printf("\n%s hesaplaniyor...\n",tmp2[h]);
+                        cont2=tip[h];
+                        cont3=tip1[h];
+                        binar=tip2[h];
+                        ascii=tip3[h];
+                        if(cont3!=0)
+                        {
+                              m=fopen(tmp2[h],"r");
+                              char ch;
+                              float enbuyuk[3],enb;;
+                              int c,cc=0,v,t,r,i=0;
+                              k=(struct a*)malloc((len1[h]+1)*sizeof(struct a));
+                              while(!feof(m))
+                              {
+                                    ch=fgetc(m);
+                                    if(ch=='\n')
+                                          cc++;
+                                    if(cc==5)
+                                          break;
+                              }
+                              if(ascii==1)
+                              {
+                                    do
+                                    {
+                                          c = fscanf(m,"%f %f %f %d %d %d",&k[i].x,&k[i].y,&k[i].z,&k[i].r,&k[i].g,&k[i].b);
+                                          i++;
+                                    }
+                                    while (c !=EOF);
+                              }
+                              if(binar==1)
+                              {
+                                    int ck=0;
+                                    while(1)
+                                    {
+                                          ck=fread(&k[i],sizeof(struct a),1,m);
+                                          i++;
+                                          if(ck!=1)
+                                                break;
+                                    }
+                              }
+                              float enkucuk=k[0].x,enkucuk1=k[0].y,enkucuk2=k[0].z;
+                              for(int j=0; j<i-1; j++)
+                              {
+                                    if(enkucuk>=k[j].x)
+                                    {
+                                          enkucuk=k[j].x;
+                                          v=j;
+                                    }
+                                    if(enkucuk1>=k[j].y)
+                                    {
+                                          enkucuk1=k[j].y;
+                                          r=j;
+                                    }
+                                    if(enkucuk2>=k[j].z)
+                                    {
+                                          enkucuk2=k[j].z;
+                                          t=j;
+                                    }
+                              }
+                              enbuyuk[0]=fabs(k[v].x-k[0].x),enbuyuk[1]=fabs(k[r].y-k[0].y),enbuyuk[2]=fabs(k[t].z-k[0].z);
+                              for(int j=0; j<i-1; j++)
+                              {
+                                    if(enbuyuk[0]<=fabs(k[j].x-k[v].x))
+                                          enbuyuk[0]=fabs(k[j].x-k[v].x);
+
+                                    if(enbuyuk[1]<=fabs(k[j].y-k[r].y))
+                                          enbuyuk[1]=fabs(k[j].y-k[r].y);
+
+                                    if(enbuyuk[2]<=fabs(k[j].z-k[t].z))
+                                          enbuyuk[2]=fabs(k[j].z-k[t].z);
+                              }
+
+                              enb=enbuyuk[0];
+                              for(int i=1; i<3; i++)
+                              {
+                                    if(enb<=enbuyuk[i])
+                                          enb=enbuyuk[i];
+                              }
+                              g=fopen(dizi2[h],"a");
+                              printf("%f %f %f\n",k[v].x,k[r].y,k[t].z);
+                              printf("%f %f %f\n",k[v].x,k[r].y,(k[t].z+enb));
+                              printf("%f %f %f\n",k[v].x,(k[r].y+enb),k[t].z);
+                              printf("%f %f %f\n",(k[v].x+enb),k[r].y,k[t].z);
+                              printf("%f %f %f\n",k[v].x,(k[r].y+enb),(k[t].z+enb));
+                              printf("%f %f %f\n",(k[v].x+enb),(k[r].y+enb),k[t].z);
+                              printf("%f %f %f\n",(k[v].x+enb),k[r].y,(k[t].z+enb));
+                              printf("%f %f %f\n",(k[v].x+enb),(k[r].y+enb),(k[t].z+enb));
+                              fputs("SECIM 3 \n",g);
+                              fprintf(g,"%f %f %f\n",k[v].x,k[r].y,k[t].z);
+                              fprintf(g,"%f %f %f\n",k[v].x,k[r].y,(k[t].z+enb));
+                              fprintf(g,"%f %f %f\n",k[v].x,(k[r].y+enb),k[t].z);
+                              fprintf(g,"%f %f %f\n",(k[v].x+enb),k[r].y,k[t].z);
+                              fprintf(g,"%f %f %f\n",k[v].x,(k[r].y+enb),(k[t].z+enb));
+                              fprintf(g,"%f %f %f\n",(k[v].x+enb),(k[r].y+enb),k[t].z);
+                              fprintf(g,"%f %f %f\n",(k[v].x+enb),k[r].y,(k[t].z+enb));
+                              fprintf(g,"%f %f %f\n",(k[v].x+enb),(k[r].y+enb),(k[t].z+enb));
+                              fclose(g),fclose(m),free(k);
+                        }
+                        if(cont2!=0)
+                        {
+                              k=(struct a*)malloc((len1[h]+1)*sizeof(struct a));
+                              int i=0,c,cc=0,v,t,r;
+                              char ch;
+                              float enbuyuk[3],enb;
+                              m=fopen(tmp2[h],"r");
+                              fseek(m,0,SEEK_SET);
+                              while(!feof(m))
+                              {
+                                    ch=fgetc(m);
+                                    if(ch=='\n')
+                                          cc++;
+                                    if(cc==5)
+                                          break;
+                              }
+                              if(ascii==1)
+                              {
+
+                                    do
+                                    {
+
+                                          c = fscanf(m,"%f %f %f",&k[i].x,&k[i].y,&k[i].z);
+                                          i++;
+                                    }
+                                    while (c !=EOF);
+
+                                    float enkucuk=k[0].x,enkucuk1=k[0].y,enkucuk2=k[0].z;
+                                    for(int j=0; j<i-1; j++)
+                                    {
+                                          if(enkucuk>=k[j].x)
+                                          {
+                                                enkucuk=k[j].x;
+                                                v=j;
+                                          }
+                                          if(enkucuk1>=k[j].y)
+                                          {
+                                                enkucuk1=k[j].y;
+                                                r=j;
+                                          }
+                                          if(enkucuk2>=k[j].z)
+                                          {
+                                                enkucuk2=k[j].z,
+                                                t=j;
+                                          }
+                                    }
+                                    enbuyuk[0]=fabs(k[v].x-k[0].x),enbuyuk[1]=fabs(k[r].y-k[0].y),enbuyuk[2]=fabs(k[t].z-k[0].z);
+                                    for(int j=0; j<i-1; j++)
+                                    {
+                                          if(enbuyuk[0]<=fabs(k[j].x-k[v].x))
+                                                enbuyuk[0]=fabs(k[j].x-k[v].x);
+
+                                          if(enbuyuk[1]<=fabs(k[j].y-k[r].y))
+                                                enbuyuk[1]=fabs(k[j].y-k[r].y);
+
+                                          if(enbuyuk[2]<=fabs(k[j].z-k[t].z))
+                                                enbuyuk[2]=fabs(k[j].z-k[t].z);
+                                    }
+                                    enb=enbuyuk[0];
+                                    for(int i=1; i<3; i++)
+                                    {
+                                          if(enb<=enbuyuk[i])
+                                                enb=enbuyuk[i];
+                                    }
+                                    g=fopen(dizi2[h],"a");
+                                    printf("%f %f %f\n",k[v].x,k[r].y,k[t].z);
+                                    printf("%f %f %f\n",k[v].x,k[r].y,(k[t].z+enb));
+                                    printf("%f %f %f\n",k[v].x,(k[r].y+enb),k[t].z);
+                                    printf("%f %f %f\n",(k[v].x+enb),k[r].y,k[t].z);
+                                    printf("%f %f %f\n",k[v].x,(k[r].y+enb),(k[t].z+enb));
+                                    printf("%f %f %f\n",(k[v].x+enb),(k[r].y+enb),k[t].z);
+                                    printf("%f %f %f\n",(k[v].x+enb),k[r].y,(k[t].z+enb));
+                                    printf("%f %f %f\n",(k[v].x+enb),(k[r].y+enb),(k[t].z+enb));
+                                    fputs("SECIM 3 \n",g);
+                                    fprintf(g,"%f %f %f\n",k[v].x,k[r].y,k[t].z);
+                                    fprintf(g,"%f %f %f\n",k[v].x,k[r].y,(k[t].z+enb));
+                                    fprintf(g,"%f %f %f\n",k[v].x,(k[r].y+enb),k[t].z);
+                                    fprintf(g,"%f %f %f\n",(k[v].x+enb),k[r].y,k[t].z);
+                                    fprintf(g,"%f %f %f\n",k[v].x,(k[r].y+enb),(k[t].z+enb));
+                                    fprintf(g,"%f %f %f\n",(k[v].x+enb),(k[r].y+enb),k[t].z);
+                                    fprintf(g,"%f %f %f\n",(k[v].x+enb),k[r].y,(k[t].z+enb));
+                                    fprintf(g,"%f %f %f\n",(k[v].x+enb),(k[r].y+enb),(k[t].z+enb));
+                                    fclose(g);
+                              }
+                              if(binar==1)
+                              {
+                                    int ck=0;
+                                    while(1)
+                                    {
+                                          ck=fread(&rgbsiz[i],sizeof(struct c),1,m);
+                                          i++;
+                                          if(ck!=1)
+                                                break;
+                                    }
+                                    float enkucuk=rgbsiz[0].x,enkucuk1=rgbsiz[0].y,enkucuk2=rgbsiz[0].z;
+                                    for(int j=0; j<i-1; j++)
+                                    {
+                                          if(enkucuk>=rgbsiz[j].x)
+                                          {
+                                                enkucuk=rgbsiz[j].x;
+                                                v=j;
+                                          }
+                                          if(enkucuk1>=rgbsiz[j].y)
+                                          {
+                                                enkucuk1=rgbsiz[j].y;
+                                                r=j;
+                                          }
+                                          if(enkucuk2>=rgbsiz[j].z)
+                                          {
+                                                enkucuk2=rgbsiz[j].z,
+                                                t=j;
+                                          }
+                                    }
+                                    enbuyuk[0]=fabs(rgbsiz[v].x-rgbsiz[0].x);
+                                    enbuyuk[1]=fabs(rgbsiz[r].y-rgbsiz[0].y);
+                                    enbuyuk[2]=fabs(rgbsiz[t].z-rgbsiz[0].z);
+                                    for(int j=0; j<i-1; j++)
+                                    {
+                                          if(enbuyuk[0]<=fabs(rgbsiz[j].x-rgbsiz[v].x))
+                                                enbuyuk[0]=fabs(rgbsiz[j].x-rgbsiz[v].x);
+
+                                          if(enbuyuk[1]<=fabs(rgbsiz[j].y-rgbsiz[r].y))
+                                                enbuyuk[1]=fabs(rgbsiz[j].y-rgbsiz[r].y);
+
+                                          if(enbuyuk[2]<=fabs(rgbsiz[j].z-rgbsiz[t].z))
+                                                enbuyuk[2]=fabs(rgbsiz[j].z-rgbsiz[t].z);
+                                    }
+                                    enb=enbuyuk[0];
+                                    for(int i=1; i<3; i++)
+                                    {
+                                          if(enb<=enbuyuk[i])
+                                                enb=enbuyuk[i];
+                                    }
+                                    g=fopen(dizi2[h],"a");
+                                    printf("%f %f %f\n",rgbsiz[v].x,rgbsiz[r].y,rgbsiz[t].z);
+                                    printf("%f %f %f\n",rgbsiz[v].x,rgbsiz[r].y,(rgbsiz[t].z+enb));
+                                    printf("%f %f %f\n",rgbsiz[v].x,(rgbsiz[r].y+enb),rgbsiz[t].z);
+                                    printf("%f %f %f\n",(rgbsiz[v].x+enb),rgbsiz[r].y,rgbsiz[t].z);
+                                    printf("%f %f %f\n",rgbsiz[v].x,(rgbsiz[r].y+enb),(rgbsiz[t].z+enb));
+                                    printf("%f %f %f\n",(rgbsiz[v].x+enb),(rgbsiz[r].y+enb),rgbsiz[t].z);
+                                    printf("%f %f %f\n",(rgbsiz[v].x+enb),rgbsiz[r].y,(rgbsiz[t].z+enb));
+                                    printf("%f %f %f\n",(rgbsiz[v].x+enb),(rgbsiz[r].y+enb),(rgbsiz[t].z+enb));
+                                    fputs("SECIM 3 \n",g);
+                                    fprintf(g,"%f %f %f\n",rgbsiz[v].x,rgbsiz[r].y,rgbsiz[t].z);
+                                    fprintf(g,"%f %f %f\n",rgbsiz[v].x,rgbsiz[r].y,(rgbsiz[t].z+enb));
+                                    fprintf(g,"%f %f %f\n",rgbsiz[v].x,(rgbsiz[r].y+enb),rgbsiz[t].z);
+                                    fprintf(g,"%f %f %f\n",(rgbsiz[v].x+enb),rgbsiz[r].y,rgbsiz[t].z);
+                                    fprintf(g,"%f %f %f\n",rgbsiz[v].x,(rgbsiz[r].y+enb),(rgbsiz[t].z+enb));
+                                    fprintf(g,"%f %f %f\n",(rgbsiz[v].x+enb),(rgbsiz[r].y+enb),rgbsiz[t].z);
+                                    fprintf(g,"%f %f %f\n",(rgbsiz[v].x+enb),rgbsiz[r].y,(rgbsiz[t].z+enb));
+                                    fprintf(g,"%f %f %f\n",(rgbsiz[v].x+enb),(rgbsiz[r].y+enb),(rgbsiz[t].z+enb));
+                                    fclose(g);
+                              }
+                              free(k),fclose(m);
+                        }
+                  }
+                  break;
+            }
+
+            case 4:
+            {
+                  if(tip2[0]==0 && tip3[0]==0)
+                        printf("lutfen ilk once 1 tusuna basarak dosyalari kontrol ediniz\n");
+                  int xc,yc,zc,r;
+                  float tmp5;
+                  for(art=0; art<l; art++)
+                        if(tip2[art]==1 || tip3[art]==1)
+                        {
+
+                              printf("cemberin x kordinatini giriniz:");
+                              scanf("%d",&xc);
+                              printf("cemberin y kordinatini giriniz:");
+                              scanf("%d",&yc);
+                              printf("cemberin z kordinatini giriniz:");
+                              scanf("%d",&zc);
+                              printf("cemberin r yaricapini giriniz:");
+                              scanf("%d",&r);
+                              break;
+                        }
+                  for(int h=0; h<y; h++)
+                  {
+                        printf("\n%s hesaplaniyor...\n",tmp2[h]);
+                        cont2=tip[h];
+                        cont3=tip1[h];
+                        binar=tip2[h];
+                        ascii=tip3[h];
+                        satir_oku(2,&tmp2,h);
+                        strcpy(degis,satir);
+                        satir_oku(3,&tmp2,h);
+                        strcpy(degis1,satir);
+                        satir_oku(4,&tmp2,h);
+                        strcpy(degis2,satir);
+                        if(cont3!=0)
+                        {
+                              k=(struct a*)malloc((len1[h]+1)*sizeof(struct a));
+                              char ch1,ch;
+                              m = fopen(tmp2[h],"r");
+                              int c,cc=0,cc1=0,i=0,ck=0;
+                              while(!feof(m))
+                              {
+                                    ch=fgetc(m);
+                                    if(ch=='\n')
+                                          cc++;
+                                    if(cc==5)
+                                          break;
+                              }
+                              if(ascii==1)
+                              {
+                                    do
+                                    {
+                                          c = fscanf(m,"%f %f %f %d %d %d",&k[i].x,&k[i].y,&k[i].z,&k[i].r,&k[i].g,&k[i].b);
+                                          i++;
+                                    }
+                                    while (c !=EOF);
+                              }
+                              if(binar==1)
+                              {
+                                    while(1)
+                                    {
+                                          ck=fread(&k[i],sizeof(struct a),1,m);
+                                          i++;
+                                          if(ck!=1)
+                                                break;
+                                    }
+                              }
+                              g=fopen(dizi2[h],"a");
+                              fputs("SECIM 4 \n",g);
+                              fprintf(g,"cx=%d\n",xc);
+                              fprintf(g,"cy=%d\n",yc);
+                              fprintf(g,"cz=%d\n",zc);
+                              fprintf(g,"cr=%d\n",r);
+                              fprintf(g,"%s",degis);
+                              fprintf(g,"%s",degis1);
+                              fprintf(g,"%s",degis2);
+                              printf("Cember merkezi: %d %d %d \nYaricapi:%d\n",xc,yc,zc,r);
+                              printf("Cemberin icindeki noktalar:\n\n");
+
+                              for(int j=0; j<i-1; j++)
+                              {
+                                  tmp5=sqrt(pow(xc-k[j].x,2)+pow(yc-k[j].y,2)+pow(zc-k[j].z,2));
+                                    if(tmp5<=r)
+                                    {
+                                          printf("%d inci NOKTA :%f %f %f %d %d %d \n",j,k[j].x,k[j].y,k[j].z,k[j].r,k[j].g,k[j].b);
+                                          fprintf(g,"%d inci NOKTA :%f %f %f %d %d %d\n",j,k[j].x,k[j].y,k[j].z,k[j].r,k[j].g,k[j].b);
+                                    }
+                              }
+                              fclose(g),fclose(m),free(k);
+                        }
+                        if(cont2!=0)
+                        {
+
+                              k=(struct a*)malloc((len1[h]+1)*sizeof(struct a));
+                              m=fopen(tmp2[h],"r");
+                              char ch1,ch;
+                              int c,cc=0,cc1=0,i=0;
+                              fseek(m,0,SEEK_SET);
+                              while(!feof(m))
+                              {
+                                    ch=fgetc(m);
+                                    if(ch=='\n')
+                                          cc++;
+                                    if(cc==5)
+                                          break;
+                              }
+                              if(ascii==1)
+                              {
+                                    do
+                                    {
+                                          c= fscanf(m,"%f %f %f",&k[i].x,&k[i].y,&k[i].z);
+                                          i++;
+                                    }
+                                    while (c !=EOF);
+                                    fseek(m,0,SEEK_SET);
+                                    while(!feof(m))
+                                    {
+                                          ch1=fgetc(m);
+                                          if(ch1=='\n')
+                                                cc1++;
+                                    }
+                                    cc1=cc1-3;
+                                    g=fopen(dizi2[h],"a");
+                                    fputs("SECIM 4 \n",g);
+                                    fprintf(g,"cx=%d\n",xc);
+                                    fprintf(g,"cy=%d\n",yc);
+                                    fprintf(g,"cz=%d\n",zc);
+                                    fprintf(g,"cr=%d\n",r);
+                                    fprintf(g,"%s",degis);
+                                    fprintf(g,"%s",degis1);
+                                    fprintf(g,"%s",degis2);
+                                    printf("Cember merkezi: %d %d %d    Yaricapi:%d\n",xc,yc,zc,r);
+                                    printf("Cemberin icindeki noktalar:\n\n");
+
+                                    for(int i=0; i<cc1-1; i++)
+                                    {
+                                          tmp5=sqrt(pow(xc-k[i].x,2)+pow(yc-k[i].y,2)+pow(zc-k[i].z,2));
+                                          if(tmp5<=r)
+                                          {
+                                                printf("%d inci NOKTA :%f %f %f \n",i,k[i].x,k[i].y,k[i].z);
+                                                fprintf(g,"%d inci NOKTA :%f %f %f \n",i,k[i].x,k[i].y,k[i].z);
+                                          }
+                                    }
+                                    fclose(g);
+                              }
+                              if(binar==1)
+                              {
+                                    int ck=0;
+                                    while(1)
+                                    {
+                                          ck=fread(&rgbsiz[i],sizeof(struct c),1,m);
+                                          i++;
+                                          if(ck!=1)
+                                                break;
+                                    }
+                                    g=fopen(dizi2[h],"a");
+                                    fputs("SECIM 4 \n",g);
+                                    fprintf(g,"cx=%d\n",xc);
+                                    fprintf(g,"cy=%d\n",yc);
+                                    fprintf(g,"cz=%d\n",zc);
+                                    fprintf(g,"cr=%d\n",r);
+                                    fprintf(g,"%s",degis);
+                                    fprintf(g,"%s",degis1);
+                                    fprintf(g,"%s",degis2);
+                                    printf("Cember merkezi: %d %d %d     Yaricapi:%d\n",xc,yc,zc,r);
+                                    printf("Cemberin icindeki noktalar:\n\n");
+
+                                    for(int j=0; j<i-1; j++)
+                                    {
+                                           tmp5=sqrt(pow(xc-k[j].x,2)+pow(yc-k[j].y,2)+pow(zc-k[j].z,2));
+                                          if(tmp5<=r)
+                                          {
+                                                printf("%d inci NOKTA :%f %f %f \n",j,rgbsiz[j].x,rgbsiz[j].y,rgbsiz[j].z);
+                                                fprintf(g,"%d inci NOKTA :%f %f %f \n",j,rgbsiz[j].x,rgbsiz[j].y,rgbsiz[j].z);
+                                          }
+                                    }
+                                    fclose(g);
+                              }
+                              fclose(m),free(k);
+                        }
+                  }
+                  break;
+            }
+            case 5:
+            {
+                  if(tip2[0]==0 && tip3[0]==0)
+                        printf("lutfen ilk once 1 tusuna basarak dosyalari kontrol ediniz\n");
+                  for(int h=0; h<y; h++)
+                  {
+                        printf("\n%s hesaplaniyor...\n",tmp2[h]);
+                        cont2=tip[h];
+                        cont3=tip1[h];
+                        binar=tip2[h];
+                        ascii=tip3[h];
+                        if(cont3!=0)
+                        {
+                              char ch;
+                              double temp,toplam=0;
+                              int c,cc=0,i=0;
+                              double bolen=0;
+                              m=fopen(tmp2[h],"r");
+                              k=(struct a*)malloc((len1[h]+1)*sizeof(struct a));
+                              while(!feof(m))
+                              {
+                                    ch=fgetc(m);
+                                    if(ch=='\n')
+                                          cc++;
+                                    if(cc==5)
+                                          break;
+                              }
+                              if(binar==1)
+                              {
+                                    int ck=0;
+                                    while(1)
+                                    {
+                                          ck=fread(&k[i],sizeof(struct a),1,m);
+                                          i++;
+                                          if(ck!=1)
+                                                break;
+                                    }
+                              }
+                              if(ascii==1)
+                              {
+                                    do
+                                    {
+                                          c = fscanf(m,"%f %f %f %d %d %d",&k[i].x,&k[i].y,&k[i].z,&k[i].r,&k[i].g,&k[i].b);
+                                          i++;
+                                    }
+                                    while (c !=EOF);
+                              }
+                              for(int j=0; j<i-2; j++)
+                              {
+                                    for(int p=j+1; p<i-1; p++)
+                                    {
+                                          temp=sqrt(pow(k[j].x-k[p].x,2)+pow(k[j].y-k[p].y,2)+pow(k[j].z-k[p].z,2));
+                                          toplam=temp+toplam;
+                                          bolen++;
+                                    }
+                              }
+                              g=fopen(dizi2[h],"a");
+                              fputs("SECIM 5 \n",g);
+                              toplam=toplam/bolen;
+                              printf("ortalama : %f\n",toplam);
+                              fprintf(g,"ortalama : %f",toplam);
+                              fclose(g),fclose(m),free(k);
+                        }
+                        if(cont2!=0)
+                        {
+                              k=(struct a*)malloc((len1[h]+1)*sizeof(struct a));
+                              m=fopen(tmp2[h],"r");
+                              double temp,toplam=0;
+                              char ch;
+                              int c,cc=0,i=0;
+                              while(!feof(m))
+                              {
+                                    ch=fgetc(m);
+                                    if(ch=='\n')
+                                          cc++;
+                                    if(cc==5)
+                                          break;
+                              }
+                              if(ascii==1)
+                              {
+                                    double bolen=0;
+                                    do
+                                    {
+                                          c = fscanf(m,"%f %f %f",&k[i].x,&k[i].y,&k[i].z);
+                                          i++;
+                                    }
+                                    while (c !=EOF);
+                                    for(int j=0; j<i-2; j++)
+                                    {
+                                          for(int p=j+1; p<i-1; p++)
+                                          {
+                                                temp=sqrt(pow(fabs(k[j].x-k[p].x),2)+pow(fabs(k[j].y-k[p].y),2)+pow(fabs(k[j].z-k[p].z),2));
+                                                toplam=temp+toplam;
+                                                bolen++;
+                                          }
+                                    }
+                                    g=fopen(dizi2[h],"a");
+                                    fputs("SECIM 5 \n",g);
+                                    toplam=toplam/bolen;
+                                    printf("ortalama : %f\n",toplam);
+                                    fprintf(g,"ortalama : %f",toplam);
+                                    fclose(g);
+                              }
+                              if(binar==1)
+                              {
+                                    double bolen=0;
+                                    int ck=0;
+                                    while(1)
+                                    {
+                                          ck=fread(&rgbsiz[i],sizeof(struct c),1,m);
+                                          i++;
+                                          if(ck!=1)
+                                                break;
+                                    }
+                                    for(int j=0; j<i-2; j++)
+                                    {
+                                          for(int p=j+1; p<i-1; p++)
+                                          {
+                                                temp=sqrt(pow(fabs(rgbsiz[j].x-rgbsiz[p].x),2)+pow(fabs(rgbsiz[j].y-rgbsiz[p].y),2)+pow(fabs(rgbsiz[j].z-rgbsiz[p].z),2));
+                                                toplam=temp+toplam;
+                                                bolen++;
+                                          }
+                                    }
+                                    g=fopen(dizi2[h],"a");
+                                    fputs("SECIM 5 \n",g);
+                                    toplam=toplam/bolen;
+                                    printf("ortalama : %f\n",toplam);
+                                    fprintf(g,"ortalama : %f",toplam);
+                                    fclose(g),fclose(m),free(k);
+                              }
+                        }
+                  }
+                  break;
+            }
+            case 6:
+            {
+                  al=1;
+                  break;
+            }
+            default:
+            {
+                  printf("lutfen 1 ile 6 arasinda secim yapiniz...6 tusu programdan cikar\n");
+                  break;
+            }
+            }
+            if(al==1)
+            {
+                  break;
+                  fclose(m);
+            }
+      }
+      return 0;
+}
