@@ -12,7 +12,7 @@ Rapor.pdf - Bu projenin raporu.
 
 2-SİSTEM GEREKSİNİMLERİ:
 -------------------
-Codeblocks'u çalıştırabilecek seviye de bir bilgisayar olması gerekmektedir
+Codeblocks'u çalıştırabilecek seviye de bir bilgisayar olması yeterlidir
 -------------------
 
 
